@@ -4,13 +4,14 @@ import App from './App.jsx'
 import AppContextProvider from './context/AppContext.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
+import { CartProvider } from './context/CartContext.jsx'
 
 
 
 const container=document.getElementById('root')
 
 createRoot(container).render(
-  
+  <CartProvider>
   <HelmetProvider> 
   <BrowserRouter> 
   <AppContextProvider>
@@ -19,5 +20,6 @@ createRoot(container).render(
   </AppContextProvider>
   </BrowserRouter>
   </HelmetProvider>
+   </CartProvider>
   
 )

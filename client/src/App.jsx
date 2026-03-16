@@ -9,6 +9,7 @@ import LoginPage from './pages/auth/LoginPage'
 import SignUpPage from './pages/auth/SignUpPage'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import ProductDetails from './pages/products/components/ProductDetails'
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/" element={<Home />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
         {/* CATCH ALL - Redirect unknown paths to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

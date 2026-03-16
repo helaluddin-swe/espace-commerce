@@ -1,136 +1,114 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../context/AppContext';
-import { 
-  Trophy, 
-  BookOpen, 
-  LayoutDashboard, 
-  ArrowRight, 
-  Zap,
-  BarChart3
-} from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
-const Home = () => {
-  const navigate = useNavigate();
-  const { userData, isLoggedIn } = useAppContext();
+// Data & Assets
+import products from "../../utils/dataProducts";
+import FeatureImg from "../../images/ecommerce.png";
+import Category from "../products/components/Category";
+import ProductCard from "../products/components/ProductCard";
 
-  // Helper to get initials for a placeholder avatar
-  const getInitials = (name) => name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : '??';
+// Components
+
+
+function HomePage() {
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchParams] = useSearchParams();
+  
+  // Get category from URL query string (e.g., /?category=electronics)
+  const selectedCategory = searchParams.get('category');
+
+  useEffect(() => {
+    const filterData = () => {
+      // If no category is selected or it's "all", show everything
+      if (!selectedCategory || selectedCategory === "all") {
+        setFilteredProducts(products);
+      } else {
+        // Filter products based on the slug in the URL
+        const filtered = products.filter(
+          (product) => product.category.toLowerCase() === selectedCategory.toLowerCase()
+        );
+        setFilteredProducts(filtered);
+      }
+    };
+    filterData();
+  }, [selectedCategory]);
 
   return (
-    <div className="min-h-screen  bg-[#020617] text-white font-sans">
-      {/* --- HERO SECTION --- */}
-      <section className="relative pt-20 pb-16 px-4 overflow-hidden">
-        {/* Animated Glow Background */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-125 bg-indigo-600/10 blur-[120px] rounded-full" />
-
-        <div className="max-w-6xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-widest mb-6">
-            <Zap size={14} /> The Ultimate Prep Platform
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 bg-linear-to-b from-white to-slate-500 bg-clip-text text-transparent">
-            Master Your Future <br /> 
-            <span className="text-indigo-500">With Full Stack Builder Space</span>
+    <div className="max-w-7xl mx-auto p-4 md:p-8 mt-16 md:mt-20">
+      
+      {/* Hero Section */}
+      <div className="mb-10 relative w-full h-64 md:h-96 rounded-3xl overflow-hidden shadow-2xl">
+        <img 
+          src={FeatureImg} 
+          alt="Feature branding" 
+          className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
+        />
+        {/* Changed to bg-gradient-to-r for standard Tailwind support */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent flex items-center px-8 md:px-16">
+          <h1 className="text-white text-4xl md:text-6xl font-black max-w-md leading-tight">
+            Upgrade Your <span className="text-indigo-400">Lifestyle.</span>
           </h1>
-          
-          <p className="max-w-2xl mx-auto text-slate-400 text-lg mb-10 leading-relaxed">
-            A comprehensive full-stack ecosystem designed for serious aspirants. 
-           Using this templates you can handle full stack MERN application within second.
-          </p>
-
-          {!isLoggedIn ? (
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={() => navigate('/signup')}
-                className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 group"
-              >
-                Get Started Free <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button 
-                onClick={() => navigate('/login')}
-                className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl font-black uppercase tracking-widest transition-all"
-              >
-                Sign In
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
-               <div className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-4xl backdrop-blur-md">
-                  <div className="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-lg">
-                    {getInitials(userData?.name)}
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs text-slate-500 font-bold uppercase">Welcome back,</p>
-                    <p className="text-xl font-black">{userData?.name}</p>
-                  </div>
-                  <button 
-                    onClick={() => navigate(userData?.role === 'admin' ? '/admin-control-center' : '/dashboard')}
-                    className="ml-4 p-3 bg-white/10 hover:bg-indigo-600 rounded-xl transition-colors"
-                  >
-                    <LayoutDashboard size={20} />
-                  </button>
-               </div>
-            </div>
-          )}
         </div>
-      </section>
+      </div>
 
-      {/* --- FEATURES GRID --- */}
-      <section className="max-w-6xl mx-auto px-4 py-20 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <FeatureCard 
-          icon={<BookOpen className="text-blue-400" />}
-          title="Enviroment Setup"
-          desc="First clone site in your local computer and command with npm insatall thats it."
-        />
-        <FeatureCard 
-          icon={<Trophy className="text-amber-400" />}
-          title="Frontend Setup"
-          desc="Enter your backend live url in client env file ,run local with npm run build and deploy your site in vercel easily."
-        />
-        <FeatureCard 
-          icon={<BarChart3 className="text-emerald-400" />}
-          title="Backend Setup"
-          desc="Only change server env file with your mongodb actual connection,your admin secret code and enter your JWT secret code."
-        />
-      </section>
+      {/* Category Filter Section */}
+      <div className="mb-10">
+        <div className="flex flex-col gap-1 mb-4">
+          <h2 className="text-2xl font-black text-gray-900">Explore Collections</h2>
+          <div className="w-12 h-1 bg-indigo-600 rounded-full"></div>
+        </div>
+        {/* Ensure Category component uses useSearchParams to set the URL */}
+        <Category />
+      </div>
 
-      {/* --- QUICK STATS (Visible if logged in) --- */}
-      {isLoggedIn && userData?.stats && (
-        <section className="max-w-4xl mx-auto px-4 pb-20">
-          <div className="bg-[#0b0f1a] border border-white/5 rounded-[2.5rem] p-8">
-            <h3 className="text-xl font-black mb-6 flex items-center gap-2">
-              <BarChart3 size={20} className="text-indigo-500"/> Your Current Progress
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <StatBox label="Total Points" value={userData.stats.totalPoints || 0} />
-              <StatBox label="Tests Taken" value={userData.stats.totalTestsTaken || 0} />
-              <StatBox label="Solved" value={userData.stats.totalSolved || 0} />
-              <StatBox label="Accuracy" value={`${((userData.stats.totalCorrect / (userData.stats.totalSolved || 1)) * 100).toFixed(1)}%`} />
+      {/* Product Grid Header */}
+      <div className="flex justify-between items-end mb-8 border-b border-gray-100 pb-4">
+        <div>
+          <h2 className="text-3xl font-black text-gray-900 capitalize">
+            {selectedCategory && selectedCategory !== "all" 
+              ? selectedCategory 
+              : "All Collection"}
+          </h2>
+          <p className="text-gray-400 text-sm font-medium mt-1">
+            Handpicked premium products for you
+          </p>
+        </div>
+        <p className="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm border border-indigo-100">
+          {filteredProducts.length} items
+        </p>
+      </div>
+
+      {/* Product Grid */}
+      {filteredProducts.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+          {filteredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-32 bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-200">
+          <div className="max-w-xs mx-auto">
+            {/* Added a bit of flair to the "Not Found" state */}
+            <div className="text-indigo-200 mb-4 flex justify-center">
+               <svg size={48} fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-16 h-16">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+               </svg>
             </div>
+            <p className="text-gray-500 font-bold text-lg">No products found</p>
+            <p className="text-gray-400 text-sm mt-2">
+              We couldn't find any items in the "{selectedCategory}" category.
+            </p>
+            <button 
+              onClick={() => window.history.pushState({}, '', '/')}
+              className="mt-6 text-indigo-600 font-bold text-sm hover:underline"
+            >
+              Clear filters
+            </button>
           </div>
-        </section>
+        </div>
       )}
     </div>
   );
-};
+}
 
-// Sub-components for cleaner code
-const FeatureCard = ({ icon, title, desc }) => (
-  <div className="bg-[#0b0f1a] border border-white/5 p-8 rounded-4xl hover:border-indigo-500/50 transition-all group">
-    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-      {icon}
-    </div>
-    <h3 className="text-xl font-bold mb-3">{title}</h3>
-    <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
-  </div>
-);
-
-const StatBox = ({ label, value }) => (
-  <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{label}</p>
-    <p className="text-2xl font-black text-indigo-400">{value}</p>
-  </div>
-);
-
-export default Home;
+export default HomePage;
